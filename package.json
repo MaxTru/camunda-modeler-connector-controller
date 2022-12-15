@@ -1,0 +1,39 @@
+{
+  "name": "camunda-modeler-autosave-plugin",
+  "version": "0.3.1",
+  "description": "Automatically save your diagrams modeled in Camunda Modeler",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/pinussilvestrus/camunda-modeler-autosave-plugin"
+  },
+  "files": [
+    "dist",
+    "client/style.css",
+    "index.js"
+  ],
+  "contributors": [
+    "Maciej Barelkowski <maciej.barelkowski@camunda.com> (https://github.com/barmac)",
+    "Niklas Kiefer <niklas.kiefer@camunda.com (https://github.com/pinussilvestrus)"
+  ],
+  "license": "MIT",
+  "scripts": {
+    "all": "run-s build test",
+    "build": "webpack",
+    "dev": "webpack -w",
+    "lint": "eslint .",
+    "test": "run-s lint"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.17.9",
+    "camunda-modeler-plugin-helpers": "^5.1.0",
+    "camunda-modeler-webpack-plugin": "^0.1.0",
+    "classnames": "^2.3.1",
+    "eslint": "^7.31.0",
+    "eslint-plugin-bpmn-io": "^0.13.0",
+    "npm-run-all": "^4.1.5",
+    "react-svg-loader": "^3.0.3",
+    "webpack": "^5.72.0",
+    "webpack-cli": "^4.9.2"
+  }
+}
