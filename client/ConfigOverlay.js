@@ -14,12 +14,9 @@ export default function ConfigOverlay({ anchor, initValues, onClose, onTemplateA
   const onSubmit = () => onClose({ enabled, connectorEndpoint });
 
   const fetchConnectors = async (endpoint) => {
-
-    // const response = await fetch(endpoint);
-    setFetchedConnectors({
-      'foo': { 'name': 'bar' },
-      'baz': { 'name': 'baz' }
-    });
+    const response = await fetch(endpoint);
+    const responseJson = await response.json()
+    setFetchedConnectors(responseJson);
   };
 
   if (!connected) {
@@ -72,12 +69,15 @@ export default function ConfigOverlay({ anchor, initValues, onClose, onTemplateA
 
           <Section.Body>
             <div>
-              {fetchedConnectors.map(connector =>
-                <div className="d-flex-center list-container">
-                  <div className="d-flex-center">{connector.name}<div className={ connector.isRunning ? 'icon icon-ok' : 'icon icon-nok' }></div></div>
-                  <div className="d-flex-center btn-primary btn-padding">Add</div>
+            {fetchedConnectors ?
+              Object.entries(fetchedConnectors).map(([key, value]) => 
+                <div className="d-flex-center list-container">              
+                  <div className="d-flex-center"><div className={true ? 'icon icon-ok' : 'icon icon-nok'}></div>{key}</div>
+                  <div onClick={() => onTemplateAdd(value)} className="d-flex-center btn-primary btn-padding">Add</div>
                 </div>
-              )}
+              ) 
+            : 
+            "Loading..."}
             </div>
 
             <Section.Actions>

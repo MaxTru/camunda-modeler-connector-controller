@@ -11,7 +11,7 @@
 .list-container {
     line-height: 2em;
     margin: 0.2em;
-    justify-content: space-around;
+    justify-content: space-between;
 }
 
 .btn-padding {
@@ -22,6 +22,7 @@
 .icon {
     width: 1em;
     height: 1em;
+    margin-right: 0.3em;
     background-repeat: no-repeat;
     background-size: cover;
 }

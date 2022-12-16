@@ -9,7 +9,7 @@ import ConfigOverlay from './ConfigOverlay';
 
 const defaultState = {
   enabled: false,
-  connectorEndpoint: 'http://localhost:1234/connectors',
+  connectorEndpoint: 'http://localhost:9898/connectors',
   connected: false,
   configOpen: false,
 };
