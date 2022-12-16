@@ -2,6 +2,9 @@
 
 [![Compatible with Camunda Modeler version 5.6](https://img.shields.io/badge/Camunda%20Modeler-5.6+-blue.svg)](https://github.com/camunda/camunda-modeler) [![Plugin Type](https://img.shields.io/badge/Plugin_Type-React_Plugin-orange.svg)](#)
 
+## Showcase
+
+![Showcase](https://github.com/MaxTru/camunda-modeler-connector-controller/blob/main/resources/showcase.gif "Showcase")
 
 ## How to use
 
