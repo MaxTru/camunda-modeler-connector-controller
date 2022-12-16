@@ -11,8 +11,10 @@ const defaultState = {
   enabled: false,
   connectorEndpoint: 'http://localhost:1234/connectors',
   connected: false,
-  configOpen: false
+  configOpen: false,
 };
+
+const TAB_TYPE_BPMN = 'cloud-bpmn';
 
 /**
  * An example client extension plugin to enable auto saving functionality
@@ -68,21 +70,6 @@ export default class ConnectorControllerPlugin extends PureComponent {
 
   }
 
-  save() {
-    const {
-      displayNotification,
-      triggerAction
-    } = this.props;
-
-    // trigger a tab save operation
-    triggerAction('save')
-      .then(tab => {
-        if (!tab) {
-          return displayNotification({ title: 'Failed to save' });
-        }
-      });
-  }
-
   handleConfigClosed(newConfig) {
     this.setState({ configOpen: false });
 
@@ -96,10 +83,45 @@ export default class ConnectorControllerPlugin extends PureComponent {
     }
   }
 
-  /**
-   * render any React component you like to extend the existing
-   * Camunda Modeler application UI
-   */
+  addTemplate = async (template) => {
+    const {
+      config,
+      displayNotification
+    } = this.props;
+
+    const elementTemplates = await config.get('elementTemplates') || [];
+
+    if (!(elementTemplates.map(t => t.id)).includes(template.id)) {
+      await this.setElementTemplates([
+        ...elementTemplates,
+        template
+      ]);
+    }
+
+    displayNotification(
+      {
+        type: 'success',
+        title: 'Connector Template Added',
+        content: 'Have fun using the Connector!'
+      }
+    );
+  }
+
+  setElementTemplates = async elementTemplates => {
+    const {
+      config,
+      triggerAction
+    } = this.props;
+
+    const activeTab = this.activeTab;
+
+    await config.set('elementTemplates', elementTemplates);
+
+    if (activeTab && activeTab.type === TAB_TYPE_BPMN) {
+      triggerAction('elementTemplates.reload');
+    }
+  }
+
   render() {
     const {
       configOpen,
@@ -126,6 +148,7 @@ export default class ConnectorControllerPlugin extends PureComponent {
         <ConfigOverlay
           anchor={ this._buttonRef.current }
           onClose={ this.handleConfigClosed }
+          onTemplateAdd={ this.addTemplate }
           initValues={ initValues }
         />
       )}

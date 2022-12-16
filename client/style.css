@@ -1,3 +1,35 @@
 #connectorControllerForm input {
     width: 100%;
 }
+
+.d-flex-center {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.list-container {
+    line-height: 2em;
+    margin: 0.2em;
+    justify-content: space-around;
+}
+
+.btn-padding {
+    padding: 0.1em 0.8em;
+    cursor: pointer;
+}
+
+.icon {
+    width: 1em;
+    height: 1em;
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+.icon-ok {
+    background-image: url('../resources/ok.png');
+}
+
+.icon-nok {
+    background-image: url('../resources/nok.png');
+}

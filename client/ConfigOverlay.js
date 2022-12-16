@@ -5,12 +5,22 @@ import { Overlay, Section } from 'camunda-modeler-plugin-helpers/components';
 const OFFSET = { left: 0 };
 
 // we can even use hooks to render into the application
-export default function ConfigOverlay({ anchor, initValues, onClose }) {
+export default function ConfigOverlay({ anchor, initValues, onClose, onTemplateAdd }) {
   const [ enabled, setEnabled ] = useState(initValues.enabled);
   const [ connected, setConnected ] = useState(initValues.connected);
   const [ connectorEndpoint, setConnectorEndpoint ] = useState(initValues.connectorEndpoint);
+  const [ fetchedConnectors, setFetchedConnectors ] = useState();
 
   const onSubmit = () => onClose({ enabled, connectorEndpoint });
+
+  const fetchConnectors = async (endpoint) => {
+
+    // const response = await fetch(endpoint);
+    setFetchedConnectors({
+      'foo': { 'name': 'bar' },
+      'baz': { 'name': 'baz' }
+    });
+  };
 
   if (!connected) {
     return (
@@ -41,7 +51,10 @@ export default function ConfigOverlay({ anchor, initValues, onClose }) {
                 className="btn btn-primary"
                 form="connectorControllerForm"
                 onClick={ () =>
-                  setConnected(!connected)
+                {
+                  fetchConnectors(connectorEndpoint);
+                  setConnected(!connected);
+                }
                 }
               >
                 Control Connectors
@@ -58,18 +71,24 @@ export default function ConfigOverlay({ anchor, initValues, onClose }) {
           <Section.Header>Connector Controller - Controlcenter</Section.Header>
 
           <Section.Body>
-            <ul>
-              <li>Connector 1....</li>
-              <li>Connector 2....</li>
-            </ul>
+            <div>
+              {fetchedConnectors.map(connector =>
+                <div className="d-flex-center list-container">
+                  <div className="d-flex-center">{connector.name}<div className={ connector.isRunning ? 'icon icon-ok' : 'icon icon-nok' }></div></div>
+                  <div className="d-flex-center btn-primary btn-padding">Add</div>
+                </div>
+              )}
+            </div>
 
             <Section.Actions>
               <button
                 type="submit"
                 className="btn btn-primary"
                 form="connectorControllerForm"
-                onClick={ () =>
-                  setConnected(!connected)
+                onClick={ () => {
+                  console.log(fetchedConnectors);
+                  setConnected(!connected);
+                }
                 }
               >
                 Disconnect

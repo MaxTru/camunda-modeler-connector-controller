@@ -25,16 +25,30 @@ const OFFSET = {
 function ConfigOverlay({
   anchor,
   initValues,
-  onClose
+  onClose,
+  onTemplateAdd
 }) {
   const [enabled, setEnabled] = (0,camunda_modeler_plugin_helpers_react__WEBPACK_IMPORTED_MODULE_0__.useState)(initValues.enabled);
   const [connected, setConnected] = (0,camunda_modeler_plugin_helpers_react__WEBPACK_IMPORTED_MODULE_0__.useState)(initValues.connected);
   const [connectorEndpoint, setConnectorEndpoint] = (0,camunda_modeler_plugin_helpers_react__WEBPACK_IMPORTED_MODULE_0__.useState)(initValues.connectorEndpoint);
+  const [fetchedConnectors, setFetchedConnectors] = (0,camunda_modeler_plugin_helpers_react__WEBPACK_IMPORTED_MODULE_0__.useState)();
 
   const onSubmit = () => onClose({
     enabled,
     connectorEndpoint
   });
+
+  const fetchConnectors = async endpoint => {
+    // const response = await fetch(endpoint);
+    setFetchedConnectors({
+      'foo': {
+        'name': 'bar'
+      },
+      'baz': {
+        'name': 'baz'
+      }
+    });
+  };
 
   if (!connected) {
     return /*#__PURE__*/camunda_modeler_plugin_helpers_react__WEBPACK_IMPORTED_MODULE_0___default().createElement(camunda_modeler_plugin_helpers_components__WEBPACK_IMPORTED_MODULE_1__.Overlay, {
@@ -56,19 +70,33 @@ function ConfigOverlay({
     }))), /*#__PURE__*/camunda_modeler_plugin_helpers_react__WEBPACK_IMPORTED_MODULE_0___default().createElement(camunda_modeler_plugin_helpers_components__WEBPACK_IMPORTED_MODULE_1__.Section.Actions, null, /*#__PURE__*/camunda_modeler_plugin_helpers_react__WEBPACK_IMPORTED_MODULE_0___default().createElement("button", {
       type: "submit",
       className: "btn btn-primary",
-      form: "autoSaveConfigForm",
-      onClick: () => setConnected(!connected)
+      form: "connectorControllerForm",
+      onClick: () => {
+        fetchConnectors(connectorEndpoint);
+        setConnected(!connected);
+      }
     }, "Control Connectors")))));
   } else {
     return /*#__PURE__*/camunda_modeler_plugin_helpers_react__WEBPACK_IMPORTED_MODULE_0___default().createElement(camunda_modeler_plugin_helpers_components__WEBPACK_IMPORTED_MODULE_1__.Overlay, {
       anchor: anchor,
       onClose: onClose,
       offset: OFFSET
-    }, /*#__PURE__*/camunda_modeler_plugin_helpers_react__WEBPACK_IMPORTED_MODULE_0___default().createElement(camunda_modeler_plugin_helpers_components__WEBPACK_IMPORTED_MODULE_1__.Section, null, /*#__PURE__*/camunda_modeler_plugin_helpers_react__WEBPACK_IMPORTED_MODULE_0___default().createElement(camunda_modeler_plugin_helpers_components__WEBPACK_IMPORTED_MODULE_1__.Section.Header, null, "Connector Controller - Controlcenter"), /*#__PURE__*/camunda_modeler_plugin_helpers_react__WEBPACK_IMPORTED_MODULE_0___default().createElement(camunda_modeler_plugin_helpers_components__WEBPACK_IMPORTED_MODULE_1__.Section.Body, null, /*#__PURE__*/camunda_modeler_plugin_helpers_react__WEBPACK_IMPORTED_MODULE_0___default().createElement("ul", null, /*#__PURE__*/camunda_modeler_plugin_helpers_react__WEBPACK_IMPORTED_MODULE_0___default().createElement("li", null, "Connector 1...."), /*#__PURE__*/camunda_modeler_plugin_helpers_react__WEBPACK_IMPORTED_MODULE_0___default().createElement("li", null, "Connector 2....")), /*#__PURE__*/camunda_modeler_plugin_helpers_react__WEBPACK_IMPORTED_MODULE_0___default().createElement(camunda_modeler_plugin_helpers_components__WEBPACK_IMPORTED_MODULE_1__.Section.Actions, null, /*#__PURE__*/camunda_modeler_plugin_helpers_react__WEBPACK_IMPORTED_MODULE_0___default().createElement("button", {
+    }, /*#__PURE__*/camunda_modeler_plugin_helpers_react__WEBPACK_IMPORTED_MODULE_0___default().createElement(camunda_modeler_plugin_helpers_components__WEBPACK_IMPORTED_MODULE_1__.Section, null, /*#__PURE__*/camunda_modeler_plugin_helpers_react__WEBPACK_IMPORTED_MODULE_0___default().createElement(camunda_modeler_plugin_helpers_components__WEBPACK_IMPORTED_MODULE_1__.Section.Header, null, "Connector Controller - Controlcenter"), /*#__PURE__*/camunda_modeler_plugin_helpers_react__WEBPACK_IMPORTED_MODULE_0___default().createElement(camunda_modeler_plugin_helpers_components__WEBPACK_IMPORTED_MODULE_1__.Section.Body, null, /*#__PURE__*/camunda_modeler_plugin_helpers_react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", null, fetchedConnectors.map(connector => /*#__PURE__*/camunda_modeler_plugin_helpers_react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
+      className: "d-flex-center list-container"
+    }, /*#__PURE__*/camunda_modeler_plugin_helpers_react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
+      className: "d-flex-center"
+    }, connector.name, /*#__PURE__*/camunda_modeler_plugin_helpers_react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
+      className: connector.isRunning ? 'icon icon-ok' : 'icon icon-nok'
+    })), /*#__PURE__*/camunda_modeler_plugin_helpers_react__WEBPACK_IMPORTED_MODULE_0___default().createElement("div", {
+      className: "d-flex-center btn-primary btn-padding"
+    }, "Add")))), /*#__PURE__*/camunda_modeler_plugin_helpers_react__WEBPACK_IMPORTED_MODULE_0___default().createElement(camunda_modeler_plugin_helpers_components__WEBPACK_IMPORTED_MODULE_1__.Section.Actions, null, /*#__PURE__*/camunda_modeler_plugin_helpers_react__WEBPACK_IMPORTED_MODULE_0___default().createElement("button", {
       type: "submit",
       className: "btn btn-primary",
-      form: "autoSaveConfigForm",
-      onClick: () => setConnected(!connected)
+      form: "connectorControllerForm",
+      onClick: () => {
+        console.log(fetchedConnectors);
+        setConnected(!connected);
+      }
     }, "Disconnect")))));
   }
 }
@@ -104,6 +132,7 @@ const defaultState = {
   connected: false,
   configOpen: false
 };
+const TAB_TYPE_BPMN = 'cloud-bpmn';
 /**
  * An example client extension plugin to enable auto saving functionality
  * into the Camunda Modeler
@@ -153,21 +182,6 @@ class ConnectorControllerPlugin extends camunda_modeler_plugin_helpers_react__WE
     } = this.state;
   }
 
-  save() {
-    const {
-      displayNotification,
-      triggerAction
-    } = this.props; // trigger a tab save operation
-
-    triggerAction('save').then(tab => {
-      if (!tab) {
-        return displayNotification({
-          title: 'Failed to save'
-        });
-      }
-    });
-  }
-
   handleConfigClosed(newConfig) {
     this.setState({
       configOpen: false
@@ -179,11 +193,36 @@ class ConnectorControllerPlugin extends camunda_modeler_plugin_helpers_react__WE
       this.setState(newConfig);
     }
   }
-  /**
-   * render any React component you like to extend the existing
-   * Camunda Modeler application UI
-   */
 
+  addTemplate = async template => {
+    const {
+      config,
+      displayNotification
+    } = this.props;
+    const elementTemplates = (await config.get('elementTemplates')) || [];
+
+    if (!elementTemplates.map(t => t.id).includes(template.id)) {
+      await this.setElementTemplates([...elementTemplates, template]);
+    }
+
+    displayNotification({
+      type: 'success',
+      title: 'Connector Template Added',
+      content: 'Have fun using the Connector!'
+    });
+  };
+  setElementTemplates = async elementTemplates => {
+    const {
+      config,
+      triggerAction
+    } = this.props;
+    const activeTab = this.activeTab;
+    await config.set('elementTemplates', elementTemplates);
+
+    if (activeTab && activeTab.type === TAB_TYPE_BPMN) {
+      triggerAction('elementTemplates.reload');
+    }
+  };
 
   render() {
     const {
@@ -210,6 +249,7 @@ class ConnectorControllerPlugin extends camunda_modeler_plugin_helpers_react__WE
     }, /*#__PURE__*/camunda_modeler_plugin_helpers_react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_resources_timer_svg__WEBPACK_IMPORTED_MODULE_3__["default"], null))), this.state.configOpen && /*#__PURE__*/camunda_modeler_plugin_helpers_react__WEBPACK_IMPORTED_MODULE_0___default().createElement(_ConfigOverlay__WEBPACK_IMPORTED_MODULE_4__["default"], {
       anchor: this._buttonRef.current,
       onClose: this.handleConfigClosed,
+      onTemplateAdd: this.addTemplate,
       initValues: initValues
     }));
   }
